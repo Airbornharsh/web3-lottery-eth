@@ -1,3 +1,4 @@
+'use client'
 import { LoaderProvider } from '@/context/LoaderContext'
 import { LotteryProvider } from '@/context/LotteryContext'
 import { WalletProvider } from '@/context/WalletContext'
