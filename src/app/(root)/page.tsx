@@ -2,7 +2,8 @@
 import React from 'react'
 
 const Page = () => {
-  return <div></div>
+  return <main>
+  </main>
 }
 
 export default Page
