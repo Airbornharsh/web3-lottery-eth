@@ -2,8 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { ethers } from 'ethers'
 
-interface WalletContextProps {
-}
+interface WalletContextProps {}
 
 const WalletContext = createContext<WalletContextProps | undefined>(undefined)
 
@@ -24,10 +23,7 @@ interface WalletContextProviderProps {
 export const WalletProvider: React.FC<WalletContextProviderProps> = ({
   children,
 }) => {
-
-  
-  const contextValue: WalletContextProps = {
-  }
+  const contextValue: WalletContextProps = {}
 
   return (
     <WalletContext.Provider value={contextValue}>

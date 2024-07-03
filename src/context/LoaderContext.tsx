@@ -1,6 +1,5 @@
 'use client'
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { useToast } from '@chakra-ui/react'
 import LoaderModal from '@/components/ui/modals/LoaderModal'
 
 interface LoaderContextProps {
@@ -28,7 +27,6 @@ export const LoaderProvider: React.FC<LoaderContextProviderProps> = ({
   children,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
-  const toast = useToast()
 
   const contextValue: LoaderContextProps = {
     isLoading,

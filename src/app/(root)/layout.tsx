@@ -48,7 +48,9 @@ export default function RootLayout({
             <WalletProvider>
               <LotteryProvider>
                 <Navbar />
-                {children}
+                <main className="w-screen flex justify-center">
+                  <div className="w-[100vw] max-w-[80rem]">{children}</div>
+                </main>
               </LotteryProvider>
             </WalletProvider>
           </LoaderProvider>
