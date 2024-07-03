@@ -74,3 +74,5 @@ ignition/deployments/chain-31337
 artifacts/
 
 cache/
+
+typechain-types
