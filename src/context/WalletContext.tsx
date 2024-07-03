@@ -1,8 +1,12 @@
 'use client'
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { ethers } from 'ethers'
+import { useAccount } from 'wagmi'
+import { getConnectorClient } from '@wagmi/core'
 
-interface WalletContextProps {}
+interface WalletContextProps {
+  address?: string
+  isConnected?: boolean
+}
 
 const WalletContext = createContext<WalletContextProps | undefined>(undefined)
 
@@ -23,7 +27,12 @@ interface WalletContextProviderProps {
 export const WalletProvider: React.FC<WalletContextProviderProps> = ({
   children,
 }) => {
-  const contextValue: WalletContextProps = {}
+  const { address, isConnected } = useAccount()
+
+  const contextValue: WalletContextProps = {
+    address,
+    isConnected,
+  }
 
   return (
     <WalletContext.Provider value={contextValue}>
