@@ -1,0 +1,18 @@
+{
+  "name": "web3-lottery",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Airbornharsh/web3-lottery-eth.git",
+  "author": "Harsh Keshri <harshkeshri1234567@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm run start",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.5"
+  }
+}

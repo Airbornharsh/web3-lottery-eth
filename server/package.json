@@ -2,7 +2,8 @@
   "name": "hardhat-project",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.6"
+    "hardhat": "^2.22.6",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
@@ -20,7 +21,7 @@
     "ethers": "^6.4.0",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.1",
-    "typechain": "^8.3.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.0"
   }
 }

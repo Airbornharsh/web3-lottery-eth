@@ -1,7 +1,7 @@
 import { useLottery } from '@/context/LotteryContext'
 import React, { useEffect, useState } from 'react'
 
-const TimeLeft= () => {
+const TimeLeft = () => {
   const { lotteryEndTime, lotteryState } = useLottery()
   const [timeLeft, setTimeLeft] = useState<{
     days: number
