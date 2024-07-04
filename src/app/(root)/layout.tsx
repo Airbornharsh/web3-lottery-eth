@@ -1,6 +1,7 @@
 'use client'
 import '@rainbow-me/rainbowkit/styles.css'
 
+import { ChakraProvider } from '@chakra-ui/react'
 import Navbar from '@/components/Navbar'
 import { LoaderProvider } from '@/context/LoaderContext'
 import { LotteryProvider } from '@/context/LotteryContext'
@@ -16,21 +17,23 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <LoaderProvider>
-            <WalletProvider>
-              <LotteryProvider>
-                <Navbar />
-                <main className="flex w-screen justify-center">
-                  <div className="w-[100vw] max-w-[80rem]">{children}</div>
-                </main>
-              </LotteryProvider>
-            </WalletProvider>
-          </LoaderProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <ChakraProvider>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            <LoaderProvider>
+              <WalletProvider>
+                <LotteryProvider>
+                  <Navbar />
+                  <main className="flex w-screen justify-center">
+                    <div className="w-[98vw] max-w-[80rem]">{children}</div>
+                  </main>
+                </LotteryProvider>
+              </WalletProvider>
+            </LoaderProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ChakraProvider>
   )
 }

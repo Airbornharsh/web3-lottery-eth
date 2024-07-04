@@ -1,48 +1,31 @@
 'use client'
+import TimeLeft from '@/components/TimeLeft'
+import ManagerPannel from '@/components/home/ManagerPannel'
+import ParticipantList from '@/components/home/ParticipantList'
+import ParticipantPannel from '@/components/home/ParticipantPannel'
+import WinnerList from '@/components/home/WinnerList'
 import { useLottery } from '@/context/LotteryContext'
 import { useWallet } from '@/context/WalletContext'
-import { Button } from '@chakra-ui/react'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import React from 'react'
 
 const Page = () => {
   const { isConnected } = useWallet()
-  const {
-    getParticipants,
-    startLottery,
-    enterLottery,
-    getWinners,
-    pickWinners,
-    getBalance,
-    getEntryFee,
-    getLotteryEndTime,
-    getLotteryState,
-    getManager,
-    isManagerFn,
-  } = useLottery()
+  const { isManager } = useLottery()
+
   return (
-    <div>
+    <div className="flex min-h-[100vh-4rem] items-center justify-center">
       {isConnected ? (
-        <div className="flex flex-col gap-2">
-          <Button
-            onClick={() => {
-              startLottery({ duration: 1 * 60 * 1000 })
-            }}
-          >
-            Start Lottery
-          </Button>
-          <Button onClick={enterLottery}>Enter Lottery</Button>
-          <Button onClick={getParticipants}>Get participants</Button>
-          <Button onClick={pickWinners}>Pick Winners</Button>
-          <Button onClick={getWinners}>Get Winners</Button>
-          <Button onClick={getBalance}>Get Balance</Button>
-          <Button onClick={getEntryFee}>Get Entry Fee</Button>
-          <Button onClick={getLotteryEndTime}>Get Lottery End Time</Button>
-          <Button onClick={getLotteryState}>Get Lottery State</Button>
-          <Button onClick={getManager}>Get Manager</Button>
-          <Button onClick={isManagerFn}>is Manager</Button>
+        <div className="mt-3 flex flex-col gap-2">
+          <TimeLeft />
+          {isManager ? <ManagerPannel /> : <ParticipantPannel />}
+          <ParticipantList />
+          <WinnerList />
         </div>
       ) : (
-        'Not connected'
+        <div className="mt-10">
+          <ConnectButton />
+        </div>
       )}
     </div>
   )

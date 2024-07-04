@@ -1,21 +1,43 @@
 'use client'
 import { ABI, CONTRACT_ADDRESS } from '@/lib/config'
+import { LOTTERYSTATE } from '@/lib/types'
 import { getEthersSigner } from '@/lib/web3'
 import { ethers } from 'ethers'
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react'
+import { useAccount } from 'wagmi'
+import { useLoader } from './LoaderContext'
 
 interface LotteryContextProps {
   getParticipants: () => Promise<void>
-  startLottery: ({ duration }: { duration: number }) => Promise<void>
+  startLottery: ({
+    duration,
+    noOfWinners,
+  }: {
+    duration: number
+    noOfWinners: number
+  }) => Promise<void>
   enterLottery: () => Promise<void>
   pickWinners: () => Promise<void>
   getWinners: () => Promise<void>
-  isManagerFn: () => Promise<void>
+  isManager: boolean
   getBalance: () => Promise<void>
   getManager: () => Promise<void>
   getLotteryState: () => Promise<void>
   getLotteryEndTime: () => Promise<void>
   getEntryFee: () => Promise<void>
+  participants: string[]
+  winners: string[]
+  lotteryState: LOTTERYSTATE
+  lotteryEndTime: number
+  entryFee: number
+  resetLottery: () => Promise<void>
+  balance: number
 }
 
 const LotteryContext = createContext<LotteryContextProps | undefined>(undefined)
@@ -37,36 +59,91 @@ interface LotteryContextProviderProps {
 export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
   children,
 }) => {
-  const [participants, setParticipants] = useState<any[]>([])
+  const { setToastMessage } = useLoader()
+  const { isConnected, address } = useAccount()
+  const { setIsLoading } = useLoader()
+  const [participants, setParticipants] = useState<string[]>([])
+  const [winners, setWinners] = useState<string[]>([])
   const [isManager, setIsManager] = useState<boolean>(false)
   const [balance, setBalance] = useState<number>(0)
   const [manager, setManager] = useState<string>('')
+  const [lotteryState, setLotteryState] = useState<LOTTERYSTATE>(0)
+  const [lotteryEndTime, setLotteryEndTime] = useState<number>(0)
+  const [entryFee, setEntryFee] = useState<number>(0)
 
-  const startLottery = async ({ duration }: { duration: number }) => {
+  useEffect(() => {
+    if (!isConnected || !address) return
+    setTimeout(() => {
+      reload()
+    }, 1000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, address])
+
+  const startLottery = async ({
+    duration,
+    noOfWinners,
+  }: {
+    duration: number
+    noOfWinners: number
+  }) => {
+    setIsLoading(true)
     const signer = await getEthersSigner()
     if (!signer) return
 
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
-      const result = await contract.startLottery(duration)
+      const result = await contract.startLottery(duration, noOfWinners)
       console.log('result:', result)
+      setToastMessage({
+        title: 'Lottery started successfully',
+        status: 'success',
+      })
+      reload()
     } catch (error) {
       console.error('Error starting lottery:', error)
+      setToastMessage({
+        title: 'Error starting lottery',
+        status: 'error',
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const enterLottery = async () => {
+    setIsLoading(true)
+
+    if (participants.includes(address!.toLowerCase())) {
+      setToastMessage({
+        title: 'Already entered lottery',
+        status: 'warning',
+      })
+      setIsLoading(false)
+      return
+    }
+
     const signer = await getEthersSigner()
     if (!signer) return
 
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
-      const result = await contract.enterLottery('Harsh', {
+      const result = await contract.enterLottery({
         value: 15000000000000,
       })
       console.log('result:', result)
+      setToastMessage({
+        title: 'Entered lottery successfully',
+        status: 'success',
+      })
+      reload()
     } catch (error) {
+      setToastMessage({
+        title: 'Error entering lottery',
+        status: 'error',
+      })
       console.error('Error entering lottery:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -77,22 +154,45 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getParticipants()
-      console.log('result:', result)
+      const tempList: string[] = []
+      Object.keys(result).forEach((key) => {
+        tempList.push(result[key].toString().toLowerCase())
+      })
+      setParticipants([...tempList])
     } catch (error) {
       console.error('Error reading data:', error)
     }
   }
 
   const pickWinners = async () => {
+    if (participants.length <= 0) {
+      setToastMessage({
+        title: 'No participants to pick winners',
+        status: 'warning',
+      })
+      return
+    }
+
+    setIsLoading(true)
     const signer = await getEthersSigner()
     if (!signer) return
 
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
-      const result = await contract.pickWinners()
+      const result = await contract.forcePickWinners()
       console.log('result:', result)
+      setToastMessage({
+        title: 'Winners picked successfully',
+        status: 'success',
+      })
     } catch (error) {
       console.error('Error picking winners:', error)
+      setToastMessage({
+        title: 'Error picking winners',
+        status: 'error',
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -103,7 +203,11 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getWinners()
-      console.log('result:', result)
+      const tempList: string[] = []
+      Object.keys(result).forEach((key) => {
+        tempList.push(result[key].toString().toLowerCase())
+      })
+      setWinners([...tempList])
     } catch (error) {
       console.error('Error reading data:', error)
     }
@@ -116,7 +220,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.isManager()
-      console.log('result:', result)
+      setIsManager(result)
     } catch (error) {
       console.error('Error reading data:', error)
     }
@@ -129,7 +233,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getBalance()
-      console.log('result:', result)
+      setBalance(Number(result))
     } catch (error) {
       console.error('Error reading data:', error)
     }
@@ -142,7 +246,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getManager()
-      console.log('result:', result)
+      setManager(result.toLowerCase())
     } catch (error) {
       console.error('Error reading data:', error)
     }
@@ -155,7 +259,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getLotteryState()
-      console.log('result:', result)
+      setLotteryState(Number(result))
     } catch (error) {
       console.error('Error reading data:', error)
     }
@@ -168,7 +272,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getLotteryEndTime()
-      console.log('result:', result)
+      setLotteryEndTime(Number(result))
     } catch (error) {
       console.error('Error reading data:', error)
     }
@@ -181,10 +285,46 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getEntryFee()
-      console.log('result:', result)
+      setEntryFee(Number(result))
     } catch (error) {
       console.error('Error reading data:', error)
     }
+  }
+
+  const resetLottery = async () => {
+    setIsLoading(true)
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.resetLottery()
+      console.log('result:', result)
+      reload()
+      setToastMessage({
+        title: 'Lottery reset successfully',
+        status: 'success',
+      })
+    } catch (error) {
+      console.error('Error starting lottery:', error)
+      setToastMessage({
+        title: 'Error resetting lottery',
+        status: 'error',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const reload = async () => {
+    getParticipants()
+    getWinners()
+    isManagerFn()
+    getBalance()
+    getManager()
+    getLotteryState()
+    getLotteryEndTime()
+    getEntryFee()
   }
 
   const contextValue: LotteryContextProps = {
@@ -193,12 +333,19 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     pickWinners,
     getWinners,
     enterLottery,
-    isManagerFn,
+    isManager,
     getBalance,
     getManager,
     getLotteryState,
     getLotteryEndTime,
     getEntryFee,
+    participants,
+    winners,
+    lotteryState,
+    lotteryEndTime,
+    entryFee,
+    resetLottery,
+    balance,
   }
 
   return (

@@ -10,28 +10,28 @@ import {
 } from '@chakra-ui/react'
 import { useLottery } from '@/context/LotteryContext'
 
-const ParticipantList = () => {
-  const { participants } = useLottery()
+const WinnerList = () => {
+  const { winners } = useLottery()
   return (
     <div className="w-[98vw] max-w-[80rem] self-start overflow-auto">
       <TableContainer className="min-h-[30rem] min-w-[50rem]">
-        <h3 className="font-semibold">Participants</h3>
+        <h3 className="font-semibold">Winners</h3>
         <Table variant="simple">
           <Thead>
             <Tr>
               <Th>Address</Th>
             </Tr>
           </Thead>
-          {participants.length > 0 ? (
+          {winners.length > 0 ? (
             <Tbody>
-              {participants.map((participant, index) => (
-                <Tr key={index.toString() + new Date()}>
-                  <Td>{participant}</Td>
+              {winners.map((winner, index) => (
+                <Tr key={index.toString() + winner}>
+                  <Td>{winner}</Td>
                 </Tr>
               ))}
             </Tbody>
           ) : (
-            <div>No Participants</div>
+            <div>No Winners Yet</div>
           )}
         </Table>
       </TableContainer>
@@ -39,4 +39,4 @@ const ParticipantList = () => {
   )
 }
 
-export default ParticipantList
+export default WinnerList

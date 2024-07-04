@@ -12,13 +12,19 @@ contract Lottery {
   }
   LotteryState public lotteryState;
 
-  address[] public participants;
-  uint256 public noOfWinners;
+  struct Participant {
+    address participantAddress;
+    string name;
+  }
+
+  Participant[] public participants;
   address[] public winners;
+  address public lastWinner;
 
   event LotteryStarted(uint256 duration);
-  event LotteryEntered(address indexed participant);
+  event LotteryEntered(address indexed participant, string name);
   event WinnersPicked(address[] winners);
+  event WinnerPicked(address winner);
 
   constructor(uint256 _entryFee) {
     manager = msg.sender;
@@ -37,24 +43,20 @@ contract Lottery {
     _;
   }
 
-  function startLottery(
-    uint256 _duration,
-    uint256 _noOfWinners
-  ) public onlyManager {
+  function startLottery(uint256 _duration) public onlyManager {
     require(lotteryState == LotteryState.CLOSED, 'Lottery is already open');
 
     lotteryState = LotteryState.OPEN;
     lotteryEndTime = block.timestamp + _duration;
-    noOfWinners = _noOfWinners;
 
     emit LotteryStarted(_duration);
   }
 
-  function enterLottery() public payable onlyWhenOpen {
+  function enterLottery(string memory _name) public payable onlyWhenOpen {
     require(msg.value == entryFee, 'Incorrect entry fee');
-    participants.push(msg.sender);
+    participants.push(Participant(msg.sender, _name));
 
-    emit LotteryEntered(msg.sender);
+    emit LotteryEntered(msg.sender, _name);
   }
 
   function getRandomNumber() private view returns (uint256) {
@@ -72,7 +74,6 @@ contract Lottery {
 
   function pickWinners() public onlyManager {
     require(lotteryState == LotteryState.OPEN, 'Lottery is not open');
-    require(noOfWinners <= participants.length, 'Not enough participants');
     require(block.timestamp >= lotteryEndTime, 'Lottery is still ongoing');
 
     if (participants.length == 0) {
@@ -80,57 +81,51 @@ contract Lottery {
       return;
     }
 
-    for (uint256 i = 0; i < noOfWinners; i++) {
-      uint256 index = getRandomNumber() % participants.length;
-      winners.push(participants[index]);
-      payable(participants[index]).transfer(
-        address(this).balance / noOfWinners
-      );
-
-      participants[index] = participants[participants.length - 1];
-      participants.pop();
-    }
+    uint256 index = getRandomNumber() % participants.length;
+    winners.push(participants[index].participantAddress);
+    lastWinner = participants[index].participantAddress;
+    payable(participants[index].participantAddress).transfer(
+      address(this).balance
+    );
 
     lotteryState = LotteryState.CLOSED;
 
     emit WinnersPicked(winners);
+    emit WinnerPicked(participants[index].participantAddress);
+
     // Reset the participants array for the next round
     delete participants;
   }
 
   function forcePickWinners() public onlyManager {
     require(lotteryState == LotteryState.OPEN, 'Lottery is not open');
-    require(noOfWinners <= participants.length, 'Not enough participants');
 
-    for (uint256 i = 0; i < noOfWinners; i++) {
-      uint256 index = getRandomNumber() % participants.length;
-      winners.push(participants[index]);
-      payable(participants[index]).transfer(
-        address(this).balance / noOfWinners
-      );
-
-      participants[index] = participants[participants.length - 1];
-      participants.pop();
-    }
+    uint256 index = getRandomNumber() % participants.length;
+    winners.push(participants[index].participantAddress);
+    lastWinner = participants[index].participantAddress;
+    payable(participants[index].participantAddress).transfer(
+      address(this).balance
+    );
 
     lotteryState = LotteryState.CLOSED;
 
     emit WinnersPicked(winners);
+    emit WinnerPicked(participants[index].participantAddress);
 
     // Reset the participants array for the next round
     delete participants;
   }
 
-  function getParticipants() public view returns (address[] memory) {
+  function getParticipants() public view returns (Participant[] memory) {
     return participants;
-  }
-
-  function getNoOfWinners() public view returns (uint256) {
-    return noOfWinners;
   }
 
   function getWinners() public view returns (address[] memory) {
     return winners;
+  }
+
+  function getLastWinner() public view returns (address) {
+    return lastWinner;
   }
 
   function isManager() public view returns (bool) {
@@ -157,13 +152,5 @@ contract Lottery {
 
   function getManager() public view returns (address) {
     return manager;
-  }
-
-  function resetLottery() public onlyManager {
-    lotteryState = LotteryState.CLOSED;
-    lotteryEndTime = 0;
-    noOfWinners = 0;
-    delete winners;
-    delete participants;
   }
 }
