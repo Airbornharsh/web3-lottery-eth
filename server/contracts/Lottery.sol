@@ -12,13 +12,18 @@ contract Lottery {
   }
   LotteryState public lotteryState;
 
+  struct Winner {
+    address winner;
+    uint256 amount;
+  }
+
   address[] public participants;
   uint256 public noOfWinners;
-  address[] public winners;
+  Winner[] public winners;
 
   event LotteryStarted(uint256 duration);
   event LotteryEntered(address indexed participant);
-  event WinnersPicked(address[] winners);
+  event WinnersPicked(Winner[] winners);
 
   constructor(uint256 _entryFee) {
     manager = msg.sender;
@@ -82,11 +87,9 @@ contract Lottery {
 
     for (uint256 i = 0; i < noOfWinners; i++) {
       uint256 index = getRandomNumber() % participants.length;
-      winners.push(participants[index]);
-      payable(participants[index]).transfer(
-        address(this).balance / noOfWinners
-      );
-
+      uint256 amount = address(this).balance / noOfWinners;
+      winners.push(Winner({ winner: participants[index], amount: amount }));
+      payable(participants[index]).transfer(amount);
       participants[index] = participants[participants.length - 1];
       participants.pop();
     }
@@ -104,11 +107,9 @@ contract Lottery {
 
     for (uint256 i = 0; i < noOfWinners; i++) {
       uint256 index = getRandomNumber() % participants.length;
-      winners.push(participants[index]);
-      payable(participants[index]).transfer(
-        address(this).balance / noOfWinners
-      );
-
+      uint256 amount = address(this).balance / noOfWinners;
+      winners.push(Winner({ winner: participants[index], amount: amount }));
+      payable(participants[index]).transfer(amount);
       participants[index] = participants[participants.length - 1];
       participants.pop();
     }
@@ -129,7 +130,7 @@ contract Lottery {
     return noOfWinners;
   }
 
-  function getWinners() public view returns (address[] memory) {
+  function getWinners() public view returns (Winner[] memory) {
     return winners;
   }
 
@@ -159,11 +160,14 @@ contract Lottery {
     return manager;
   }
 
+  function resetWinners() public onlyManager {
+    delete winners;
+  }
+
   function resetLottery() public onlyManager {
     lotteryState = LotteryState.CLOSED;
     lotteryEndTime = 0;
     noOfWinners = 0;
-    delete winners;
     delete participants;
   }
 }
