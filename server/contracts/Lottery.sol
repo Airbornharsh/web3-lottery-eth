@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 contract Lottery {
   address public manager;
   uint256 public entryFee;
-  uint256 public numberOfWinners;
   uint256 public lotteryEndTime;
 
   enum LotteryState {
@@ -25,10 +24,9 @@ contract Lottery {
   event LotteryEntered(address indexed participant, string name);
   event WinnersPicked(address[] winners);
 
-  constructor(uint256 _entryFee, uint256 _numberOfWinners) {
+  constructor(uint256 _entryFee) {
     manager = msg.sender;
     entryFee = _entryFee;
-    numberOfWinners = _numberOfWinners;
     lotteryState = LotteryState.CLOSED;
   }
 
@@ -43,20 +41,20 @@ contract Lottery {
     _;
   }
 
-  function startLottery(uint256 duration) public onlyManager {
+  function startLottery(uint256 _duration) public onlyManager {
     require(lotteryState == LotteryState.CLOSED, 'Lottery is already open');
 
     lotteryState = LotteryState.OPEN;
-    lotteryEndTime = block.timestamp + duration;
+    lotteryEndTime = block.timestamp + _duration;
 
-    emit LotteryStarted(duration);
+    emit LotteryStarted(_duration);
   }
 
-  function enterLottery(string memory name) public payable onlyWhenOpen {
+  function enterLottery(string memory _name) public payable onlyWhenOpen {
     require(msg.value == entryFee, 'Incorrect entry fee');
-    participants.push(Participant(msg.sender, name));
+    participants.push(Participant(msg.sender, _name));
 
-    emit LotteryEntered(msg.sender, name);
+    emit LotteryEntered(msg.sender, _name);
   }
 
   function getRandomNumber() private view returns (uint256) {
@@ -75,15 +73,14 @@ contract Lottery {
   function pickWinners() public onlyManager {
     require(lotteryState == LotteryState.OPEN, 'Lottery is not open');
     require(block.timestamp >= lotteryEndTime, 'Lottery is still ongoing');
-    require(participants.length >= numberOfWinners, 'Not enough participants');
 
-    for (uint256 i = 0; i < numberOfWinners; i++) {
-      uint256 index = getRandomNumber() % participants.length;
-      winners.push(participants[index].participantAddress);
-      payable(participants[index].participantAddress).transfer(entryFee);
-      participants[index] = participants[participants.length - 1];
-      participants.pop();
-    }
+    uint256 index = getRandomNumber() % participants.length;
+    winners.push(participants[index].participantAddress);
+    payable(participants[index].participantAddress).transfer(
+      address(this).balance
+    );
+    participants[index] = participants[participants.length - 1];
+    participants.pop();
 
     lotteryState = LotteryState.CLOSED;
 
@@ -99,5 +96,31 @@ contract Lottery {
 
   function getWinners() public view returns (address[] memory) {
     return winners;
+  }
+
+  function isManager() public view returns (bool) {
+    return msg.sender == manager;
+  }
+
+  function getBalance() public view onlyManager returns (uint256) {
+    return address(this).balance;
+  }
+
+  function getLotteryState() public view returns (LotteryState) {
+    return lotteryState;
+  }
+
+  function getLotteryEndTime() public view returns (uint256) {
+    require(lotteryState == LotteryState.OPEN, 'Lottery is not open');
+
+    return lotteryEndTime;
+  }
+
+  function getEntryFee() public view returns (uint256) {
+    return entryFee;
+  }
+
+  function getManager() public view returns (address) {
+    return manager;
   }
 }

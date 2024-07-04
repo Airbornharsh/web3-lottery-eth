@@ -5,11 +5,6 @@
         "internalType": "uint256",
         "name": "_entryFee",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_numberOfWinners",
-        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -64,7 +59,7 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "name",
+        "name": "_name",
         "type": "string"
       }
     ],
@@ -81,6 +76,71 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEntryFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLotteryEndTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLotteryState",
+    "outputs": [
+      {
+        "internalType": "enum Lottery.LotteryState",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getManager",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -126,6 +186,19 @@
   },
   {
     "inputs": [],
+    "name": "isManager",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "lotteryEndTime",
     "outputs": [
       {
@@ -158,19 +231,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "numberOfWinners",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -211,7 +271,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "duration",
+        "name": "_duration",
         "type": "uint256"
       }
     ],

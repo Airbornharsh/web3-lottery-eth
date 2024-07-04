@@ -12,6 +12,12 @@ const Page = () => {
     enterLottery,
     getWinners,
     pickWinners,
+    getBalance,
+    getEntryFee,
+    getLotteryEndTime,
+    getLotteryState,
+    getManager,
+    isManagerFn,
   } = useLottery()
   return (
     <div>
@@ -28,6 +34,12 @@ const Page = () => {
           <Button onClick={getParticipants}>Get participants</Button>
           <Button onClick={pickWinners}>Pick Winners</Button>
           <Button onClick={getWinners}>Get Winners</Button>
+          <Button onClick={getBalance}>Get Balance</Button>
+          <Button onClick={getEntryFee}>Get Entry Fee</Button>
+          <Button onClick={getLotteryEndTime}>Get Lottery End Time</Button>
+          <Button onClick={getLotteryState}>Get Lottery State</Button>
+          <Button onClick={getManager}>Get Manager</Button>
+          <Button onClick={isManagerFn}>is Manager</Button>
         </div>
       ) : (
         'Not connected'

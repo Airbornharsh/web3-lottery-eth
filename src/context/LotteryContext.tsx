@@ -10,6 +10,12 @@ interface LotteryContextProps {
   enterLottery: () => Promise<void>
   pickWinners: () => Promise<void>
   getWinners: () => Promise<void>
+  isManagerFn: () => Promise<void>
+  getBalance: () => Promise<void>
+  getManager: () => Promise<void>
+  getLotteryState: () => Promise<void>
+  getLotteryEndTime: () => Promise<void>
+  getEntryFee: () => Promise<void>
 }
 
 const LotteryContext = createContext<LotteryContextProps | undefined>(undefined)
@@ -32,6 +38,9 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
   children,
 }) => {
   const [participants, setParticipants] = useState<any[]>([])
+  const [isManager, setIsManager] = useState<boolean>(false)
+  const [balance, setBalance] = useState<number>(0)
+  const [manager, setManager] = useState<string>('')
 
   const startLottery = async ({ duration }: { duration: number }) => {
     const signer = await getEthersSigner()
@@ -100,12 +109,96 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     }
   }
 
+  const isManagerFn = async () => {
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.isManager()
+      console.log('result:', result)
+    } catch (error) {
+      console.error('Error reading data:', error)
+    }
+  }
+
+  const getBalance = async () => {
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.getBalance()
+      console.log('result:', result)
+    } catch (error) {
+      console.error('Error reading data:', error)
+    }
+  }
+
+  const getManager = async () => {
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.getManager()
+      console.log('result:', result)
+    } catch (error) {
+      console.error('Error reading data:', error)
+    }
+  }
+
+  const getLotteryState = async () => {
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.getLotteryState()
+      console.log('result:', result)
+    } catch (error) {
+      console.error('Error reading data:', error)
+    }
+  }
+
+  const getLotteryEndTime = async () => {
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.getLotteryEndTime()
+      console.log('result:', result)
+    } catch (error) {
+      console.error('Error reading data:', error)
+    }
+  }
+
+  const getEntryFee = async () => {
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.getEntryFee()
+      console.log('result:', result)
+    } catch (error) {
+      console.error('Error reading data:', error)
+    }
+  }
+
   const contextValue: LotteryContextProps = {
     getParticipants,
     startLottery,
     pickWinners,
     getWinners,
     enterLottery,
+    isManagerFn,
+    getBalance,
+    getManager,
+    getLotteryState,
+    getLotteryEndTime,
+    getEntryFee,
   }
 
   return (
