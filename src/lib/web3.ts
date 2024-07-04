@@ -5,7 +5,6 @@ import { getConnectorClient } from '@wagmi/core'
 import { WALLET_PROJECT_ID } from './config'
 import { sepolia } from 'viem/chains'
 import { QueryClient } from '@tanstack/react-query'
-import type { Account, Chain, Client, Transport } from 'viem'
 
 export const wagmiConfig: Config = getDefaultConfig({
   appName: 'Lottery App',
