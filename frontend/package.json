@@ -20,7 +20,6 @@
     "react": "^18",
     "react-dom": "^18",
     "react-moralis": "^1.4.2",
-    "react-toastify": "^10.0.5",
     "viem": "2.9.27",
     "wagmi": "2.5.22"
   },
