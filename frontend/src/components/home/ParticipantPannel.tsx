@@ -1,5 +1,4 @@
 import React from 'react'
-import TimeLeft from '../TimeLeft'
 import { useLottery } from '@/context/LotteryContext'
 import { Button } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
