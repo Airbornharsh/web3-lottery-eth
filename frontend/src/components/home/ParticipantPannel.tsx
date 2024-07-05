@@ -8,16 +8,19 @@ const ParticipantPannel = () => {
   const { lotteryState, enterLottery, participants } = useLottery()
   return (
     <>
-      {lotteryState === 0 ? <div></div> : <div>Lottery is Closed</div>}
-      <div>
-        {participants.includes(address!.toLowerCase()) ? (
-          <div>
-            <div>You are in the lottery</div>
-          </div>
-        ) : (
-          <Button onClick={() => enterLottery()}>Enter Lottery</Button>
-        )}
-      </div>
+      {lotteryState === 0 ? (
+        <div>
+          {participants.includes(address!.toLowerCase()) ? (
+            <div>
+              <div>You are in the lottery</div>
+            </div>
+          ) : (
+            <Button onClick={() => enterLottery()}>Enter Lottery</Button>
+          )}
+        </div>
+      ) : (
+        <div>Lottery is Closed</div>
+      )}
     </>
   )
 }

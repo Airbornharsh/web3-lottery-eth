@@ -1,6 +1,6 @@
 'use client'
 import { ABI, CONTRACT_ADDRESS } from '@/lib/config'
-import { LOTTERYSTATE } from '@/lib/types'
+import { LOTTERYSTATE, Winner } from '@/lib/types'
 import { getEthersSigner } from '@/lib/web3'
 import { ethers } from 'ethers'
 import React, {
@@ -32,7 +32,7 @@ interface LotteryContextProps {
   getLotteryEndTime: () => Promise<void>
   getEntryFee: () => Promise<void>
   participants: string[]
-  winners: string[]
+  winners: Winner[]
   lotteryState: LOTTERYSTATE
   lotteryEndTime: number
   entryFee: number
@@ -63,7 +63,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
   const { isConnected, address } = useAccount()
   const { setIsLoading } = useLoader()
   const [participants, setParticipants] = useState<string[]>([])
-  const [winners, setWinners] = useState<string[]>([])
+  const [winners, setWinners] = useState<Winner[]>([])
   const [isManager, setIsManager] = useState<boolean>(false)
   const [balance, setBalance] = useState<number>(0)
   const [manager, setManager] = useState<string>('')
@@ -181,6 +181,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     try {
       const result = await contract.forcePickWinners()
       await result.wait()
+      reload()
       setToastMessage({
         title: 'Winners picked successfully',
         status: 'success',
@@ -203,9 +204,13 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.getWinners()
-      const tempList: string[] = []
+      const tempList: Winner[] = []
+      console.log(result)
       Object.keys(result).forEach((key) => {
-        tempList.push(result[key].toString().toLowerCase())
+        tempList.push({
+          address: result[key][0].toString().toLowerCase(),
+          amount: Number(result[key][1]) / 10 ** 18,
+        })
       })
       setWinners([...tempList])
     } catch (error) {

@@ -80,16 +80,22 @@ contract Lottery {
     require(noOfWinners <= participants.length, 'Not enough participants');
     require(block.timestamp >= lotteryEndTime, 'Lottery is still ongoing');
 
-    if (participants.length == 0) {
-      lotteryState = LotteryState.CLOSED;
-      return;
-    }
-
     for (uint256 i = 0; i < noOfWinners; i++) {
       uint256 index = getRandomNumber() % participants.length;
       uint256 amount = address(this).balance / noOfWinners;
-      winners.push(Winner({ winner: participants[index], amount: amount }));
-      payable(participants[index]).transfer(amount);
+      address winnerAddress = participants[index];
+      bool existingWinner = false;
+      for (uint256 j = 0; j < winners.length; j++) {
+        if (winners[j].winner == winnerAddress) {
+          winners[j].amount += amount;
+          existingWinner = true;
+          break;
+        }
+      }
+      if (!existingWinner) {
+        winners.push(Winner({ winner: winnerAddress, amount: amount }));
+      }
+      payable(winnerAddress).transfer(amount);
       participants[index] = participants[participants.length - 1];
       participants.pop();
     }
@@ -108,8 +114,19 @@ contract Lottery {
     for (uint256 i = 0; i < noOfWinners; i++) {
       uint256 index = getRandomNumber() % participants.length;
       uint256 amount = address(this).balance / noOfWinners;
-      winners.push(Winner({ winner: participants[index], amount: amount }));
-      payable(participants[index]).transfer(amount);
+      address winnerAddress = participants[index];
+      bool existingWinner = false;
+      for (uint256 j = 0; j < winners.length; j++) {
+        if (winners[j].winner == winnerAddress) {
+          winners[j].amount += amount;
+          existingWinner = true;
+          break;
+        }
+      }
+      if (!existingWinner) {
+        winners.push(Winner({ winner: winnerAddress, amount: amount }));
+      }
+      payable(winnerAddress).transfer(amount);
       participants[index] = participants[participants.length - 1];
       participants.pop();
     }

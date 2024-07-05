@@ -40,10 +40,22 @@
     "anonymous": false,
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "winner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
         "indexed": false,
-        "internalType": "address[]",
+        "internalType": "struct Lottery.Winner[]",
         "name": "winners",
-        "type": "address[]"
+        "type": "tuple[]"
       }
     ],
     "name": "WinnersPicked",
@@ -172,9 +184,21 @@
     "name": "getWinners",
     "outputs": [
       {
-        "internalType": "address[]",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "winner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Lottery.Winner[]",
         "name": "",
-        "type": "address[]"
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -279,6 +303,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "resetWinners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -308,8 +339,13 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "winner",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
