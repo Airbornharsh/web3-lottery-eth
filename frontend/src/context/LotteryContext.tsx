@@ -93,7 +93,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.startLottery(duration, noOfWinners)
-      console.log('result:', result)
+      await result.wait()
       setToastMessage({
         title: 'Lottery started successfully',
         status: 'success',
@@ -130,7 +130,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.enterLottery({
         value: 15000000000000,
       })
-      console.log('result:', result)
+      await result.wait()
       setToastMessage({
         title: 'Entered lottery successfully',
         status: 'success',
@@ -180,7 +180,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.forcePickWinners()
-      console.log('result:', result)
+      await result.wait()
       setToastMessage({
         title: 'Winners picked successfully',
         status: 'success',
@@ -299,7 +299,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
     try {
       const result = await contract.resetLottery()
-      console.log('result:', result)
+      await result.wait()
       reload()
       setToastMessage({
         title: 'Lottery reset successfully',
