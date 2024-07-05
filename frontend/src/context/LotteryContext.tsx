@@ -38,6 +38,7 @@ interface LotteryContextProps {
   entryFee: number
   resetLottery: () => Promise<void>
   balance: number
+  resetWinners: () => Promise<void>
 }
 
 const LotteryContext = createContext<LotteryContextProps | undefined>(undefined)
@@ -321,6 +322,31 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     }
   }
 
+  const resetWinners = async () => {
+    setIsLoading(true)
+    const signer = await getEthersSigner()
+    if (!signer) return
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer)
+    try {
+      const result = await contract.resetWinners()
+      await result.wait()
+      reload()
+      setToastMessage({
+        title: 'Winners reset successfully',
+        status: 'success',
+      })
+    } catch (error) {
+      console.error('Error starting lottery:', error)
+      setToastMessage({
+        title: 'Error resetting winners',
+        status: 'error',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const reload = async () => {
     getParticipants()
     getWinners()
@@ -351,6 +377,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     entryFee,
     resetLottery,
     balance,
+    resetWinners,
   }
 
   return (

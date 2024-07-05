@@ -7,13 +7,22 @@ import {
   Th,
   Td,
   TableContainer,
+  Button,
 } from '@chakra-ui/react'
 import { useLottery } from '@/context/LotteryContext'
 
 const WinnerList = () => {
-  const { winners } = useLottery()
+  const { winners, resetWinners } = useLottery()
   return (
     <div className="w-[98vw] max-w-[80rem] self-start overflow-auto">
+      <Button
+        className="border-0 bg-white text-black shadow-md hover:scale-105"
+        onClick={() => {
+          resetWinners()
+        }}
+      >
+        Reset Winners
+      </Button>
       <TableContainer className="min-h-[30rem] min-w-[50rem]">
         <Table variant="simple">
           <Thead>
