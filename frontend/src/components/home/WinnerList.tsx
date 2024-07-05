@@ -28,7 +28,7 @@ const WinnerList = () => {
           <Thead>
             <Tr>
               <Th>Address</Th>
-              <Th isNumeric>Address</Th>
+              <Th isNumeric>Amount Won</Th>
             </Tr>
           </Thead>
           {winners.length > 0 ? (
