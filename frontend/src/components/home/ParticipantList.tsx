@@ -15,7 +15,6 @@ const ParticipantList = () => {
   return (
     <div className="w-[98vw] max-w-[80rem] self-start overflow-auto">
       <TableContainer className="min-h-[30rem] min-w-[50rem]">
-        <h3 className="font-semibold">Participants</h3>
         <Table variant="simple">
           <Thead>
             <Tr>
