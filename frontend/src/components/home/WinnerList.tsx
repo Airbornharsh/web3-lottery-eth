@@ -19,13 +19,15 @@ const WinnerList = () => {
           <Thead>
             <Tr>
               <Th>Address</Th>
+              <Th isNumeric>Address</Th>
             </Tr>
           </Thead>
           {winners.length > 0 ? (
             <Tbody>
               {winners.map((winner, index) => (
-                <Tr key={index.toString() + winner}>
-                  <Td>{winner}</Td>
+                <Tr key={index.toString() + winner.address}>
+                  <Td>{winner.address}</Td>
+                  <Td isNumeric>{winner.amount} ETH</Td>
                 </Tr>
               ))}
             </Tbody>

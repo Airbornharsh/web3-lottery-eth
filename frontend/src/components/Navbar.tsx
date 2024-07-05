@@ -2,8 +2,10 @@ import React from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { Button } from '@chakra-ui/react'
 import { useLottery } from '@/context/LotteryContext'
+import { useAccount } from 'wagmi'
 
 const Navbar = () => {
+  const { isConnected } = useAccount()
   const { isManager, resetLottery, balance } = useLottery()
   return (
     <nav className="bg-secondary sticky top-0 z-30 flex h-16 w-screen justify-center border-b bg-white">
@@ -14,7 +16,7 @@ const Navbar = () => {
             {balance / 10 ** 18} ETH
           </p>
           <ConnectButton />
-          {isManager && (
+          {isConnected && isManager && (
             <Button
               className="border-0 bg-white text-black shadow-md hover:scale-105"
               onClick={() => {
