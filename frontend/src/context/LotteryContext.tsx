@@ -101,7 +101,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       })
       reload()
     } catch (error) {
-      console.error('Error starting lottery:', error)
       setToastMessage({
         title: 'Error starting lottery',
         status: 'error',
@@ -142,7 +141,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
         title: 'Error entering lottery',
         status: 'error',
       })
-      console.error('Error entering lottery:', error)
     } finally {
       setIsLoading(false)
     }
@@ -161,7 +159,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       })
       setParticipants([...tempList])
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -188,7 +185,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
         status: 'success',
       })
     } catch (error) {
-      console.error('Error picking winners:', error)
+      error('Error picking winners:', error)
       setToastMessage({
         title: 'Error picking winners',
         status: 'error',
@@ -206,7 +203,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
     try {
       const result = await contract.getWinners()
       const tempList: Winner[] = []
-      console.log(result)
       Object.keys(result).forEach((key) => {
         tempList.push({
           address: result[key][0].toString().toLowerCase(),
@@ -215,7 +211,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       })
       setWinners([...tempList])
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -228,7 +223,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.isManager()
       setIsManager(result)
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -241,7 +235,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.getBalance()
       setBalance(Number(result))
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -254,7 +247,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.getManager()
       setManager(result.toLowerCase())
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -267,7 +259,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.getLotteryState()
       setLotteryState(Number(result))
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -280,7 +271,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.getLotteryEndTime()
       setLotteryEndTime(Number(result))
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -293,7 +283,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
       const result = await contract.getEntryFee()
       setEntryFee(Number(result))
     } catch (error) {
-      console.error('Error reading data:', error)
     }
   }
 
@@ -312,7 +301,7 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
         status: 'success',
       })
     } catch (error) {
-      console.error('Error starting lottery:', error)
+      error('Error starting lottery:', error)
       setToastMessage({
         title: 'Error resetting lottery',
         status: 'error',
@@ -337,7 +326,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
         status: 'success',
       })
     } catch (error) {
-      console.error('Error starting lottery:', error)
       setToastMessage({
         title: 'Error resetting winners',
         status: 'error',
