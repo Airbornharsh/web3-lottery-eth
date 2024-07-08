@@ -185,7 +185,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
         status: 'success',
       })
     } catch (error) {
-      error('Error picking winners:', error)
       setToastMessage({
         title: 'Error picking winners',
         status: 'error',
@@ -301,7 +300,6 @@ export const LotteryProvider: React.FC<LotteryContextProviderProps> = ({
         status: 'success',
       })
     } catch (error) {
-      error('Error starting lottery:', error)
       setToastMessage({
         title: 'Error resetting lottery',
         status: 'error',
